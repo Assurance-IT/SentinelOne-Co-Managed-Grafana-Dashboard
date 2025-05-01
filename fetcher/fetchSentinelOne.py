@@ -193,7 +193,6 @@ async def agents_in_global_scope():
     point = Point("agents_in_global_scope").field("value", value)
     return point
 
-# -------- MAIN FETCH CYCLE --------
 async def fetch_all_and_write():
     tasks = [
         resolved_incidents_last_week(),
@@ -228,6 +227,8 @@ async def agents_requiring_action():
     
     point = Point("agent_action_needed").field("value", value)
     return point
+
+# -------- MAIN FETCH CYCLE --------
 
 # Main loop of grabbing all data asynchronously and pushing to influxdb. 
 async def main_loop():
