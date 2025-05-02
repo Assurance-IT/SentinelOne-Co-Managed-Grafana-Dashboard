@@ -188,25 +188,6 @@ async def agents_in_global_scope():
     point = Point("agents_in_global_scope").field("value", value)
     return point
 
-async def fetch_all_and_write():
-    tasks = [
-        resolved_incidents_last_week(),
-        resolved_true_positives_last_week(),
-        resolved_false_positives_last_week(),
-        total_number_incidents_last_week(),
-        unresolved_incidents_last_week(),
-        agents_in_global_scope(),
-        agents_requiring_action()
-    ]
-    results = await asyncio.gather(*tasks, return_exceptions=True)
-
-    for point in results:
-        if isinstance(point, Exception):
-            print(f"Error during fetch: {point}")
-            continue
-        if point:
-            write_api.write(bucket=influxdb_bucket, org=influxdb_org, record=point)
-
 async def agents_requiring_action():
     endpoint = sentinelone_url + "/web/api/v2.1/agents"
 
@@ -222,6 +203,68 @@ async def agents_requiring_action():
     
     point = Point("agent_action_needed").field("value", value)
     return point
+
+async def total_applications():
+    endpoint = sentinelone_url + "/web/api/v2.1/application-management/inventory"
+
+    # Pagination will give us an item count
+    async with ClientSession() as session:
+        async with session.get(endpoint, headers=AUTH_HEADER) as response:
+            data = await response.json()
+            value = data.get("pagination", {}).get("totalItems")
+    
+    point = Point("total_apps").field("value", value)
+    return point
+
+async def total_application_vulnerabilities():
+    endpoint = sentinelone_url + "/web/api/v2.1/application-management/risks/applications"
+
+    # Pagination will give us an item count
+    async with ClientSession() as session:
+        async with session.get(endpoint, headers=AUTH_HEADER) as response:
+            data = await response.json()
+            value = data.get("pagination", {}).get("totalItems")
+    
+    point = Point("total_app_vulns").field("value", value)
+    return point
+
+async def critical_application_vulnerabilities():
+    endpoint = sentinelone_url + "/web/api/v2.1/application-management/risks/applications"
+
+    params = {
+        "highestSeverities": "CRITICAL"
+    }
+
+    # Pagination will give us an item count
+    async with ClientSession() as session:
+        async with session.get(endpoint, headers=AUTH_HEADER, params=params) as response:
+            data = await response.json()
+            value = data.get("pagination", {}).get("totalItems")
+    
+    point = Point("critical_app_vulns").field("value", value)
+    return point
+
+async def fetch_all_and_write():
+    tasks = [
+        resolved_incidents_last_week(),
+        resolved_true_positives_last_week(),
+        resolved_false_positives_last_week(),
+        total_number_incidents_last_week(),
+        unresolved_incidents_last_week(),
+        agents_in_global_scope(),
+        agents_requiring_action(),
+        total_applications(),
+        total_application_vulnerabilities(),
+        critical_application_vulnerabilities()
+    ]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
+    for point in results:
+        if isinstance(point, Exception):
+            print(f"Error during fetch: {point}")
+            continue
+        if point:
+            write_api.write(bucket=influxdb_bucket, org=influxdb_org, record=point)
 
 # -------- MAIN FETCH CYCLE --------
 

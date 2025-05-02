@@ -10,7 +10,7 @@ services:
       - DOCKER_INFLUXDB_INIT_PASSWORD=admin123
       - DOCKER_INFLUXDB_INIT_ORG=my-org
       - DOCKER_INFLUXDB_INIT_BUCKET=my-bucket
-      - DOCKER_INFLUXDB_INIT_RETENTION=1w
+      - DOCKER_INFLUXDB_INIT_RETENTION=100d
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-token
     volumes:
     - influxdb_data:/var/lib/influxdb2
