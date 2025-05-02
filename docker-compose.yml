@@ -4,8 +4,6 @@ services:
     container_name: influxdb
     ports:
       - "8086:8086"
-    volumes:
-      - influxdb_data:/var/lib/influxdb2
     environment:
       - DOCKER_INFLUXDB_INIT_MODE=setup
       - DOCKER_INFLUXDB_INIT_USERNAME=admin
@@ -14,6 +12,8 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=my-bucket
       - DOCKER_INFLUXDB_INIT_RETENTION=1w
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-token
+    volumes:
+    - influxdb_data:/var/lib/influxdb2
 
   postgres:
       image: postgres:15
@@ -30,11 +30,9 @@ services:
 
   grafana:
     image: grafana/grafana:10.0.0
+    container_name: grafana
     ports:
       - "3000:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
@@ -44,12 +42,13 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin123
       - POSTGRES_DB=mydatabase
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
 
   fetcher:
     build: ./fetcher
     container_name: fetcher
-    depends_on:
-      - influxdb
     environment:
       - INFLUXDB_URL=http://influxdb:8086
       - INFLUXDB_ORG=my-org
@@ -58,7 +57,11 @@ services:
       - REFRESH_INTERVAL_SECONDS=10
       - SENTINELONE_URL=S1_URL_HERE
       - SENTINELONE_API_TOKEN=S1_API_TOKEN_HERE
+    volumes:
+      - fetcher_data:/app
+
 volumes:
   influxdb_data:
   grafana_data:
   postgres_data:
+  fetcher_data:

@@ -23,9 +23,6 @@ AUTH_HEADER = {"Authorization": f"ApiToken {sentinelone_token}"}
 client = InfluxDBClient(url=influxdb_url, token=influxdb_token, org=influxdb_org)
 write_api = client.write_api(write_options=SYNCHRONOUS)
 
-# Previous metric points
-previous_resolved_threats = 0
-
 # --- Wait for InfluxDB ---
 def wait_for_influxdb(host="influxdb", port=8086, timeout=30):
     start = time.time()
@@ -49,8 +46,6 @@ def confirm_sentinelone_token():
         async with ClientSession() as session:
             async with session.post(url, json=json_data, headers=AUTH_HEADER) as response:
                 response_data = await response.text()
-                print("Status:", response.status)
-                print("Response:", response_data)
 
                 if response.status == 200:
                     print("Token is valid!")
