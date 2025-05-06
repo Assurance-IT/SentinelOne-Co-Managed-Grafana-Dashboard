@@ -1,0 +1,2 @@
+# customer1: https://api.example.com ABCDEFG123456
+# customer2: https://another-api.com ZYXWV987654

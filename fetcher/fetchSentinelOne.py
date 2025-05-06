@@ -1,6 +1,6 @@
 import os
 import time
-import socket
+import requests
 import asyncio
 from aiohttp import ClientSession
 from datetime import datetime, timedelta, timezone
@@ -24,17 +24,16 @@ client = InfluxDBClient(url=influxdb_url, token=influxdb_token, org=influxdb_org
 write_api = client.write_api(write_options=SYNCHRONOUS)
 
 # --- Wait for InfluxDB ---
-def wait_for_influxdb(host="influxdb", port=8086, timeout=30):
-    start = time.time()
-    while time.time() - start < timeout:
+def wait_for_influxdb():
+    while True:
         try:
-            with socket.create_connection((host, port), timeout=2):
-                print("InfluxDB is reachable.")
+            response = requests.get(influxdb_url, timeout=5)
+            if response.status_code == 200:
+                print("InfluxDB is up!")
                 return
-        except OSError:
-            print("Waiting for InfluxDB...")
-            time.sleep(2)
-    raise TimeoutError("InfluxDB not reachable.")
+        except Exception as e:
+            print(f"Waiting for InfluxDB... ({e})")
+        time.sleep(5)
 
 # --- Check SentinelOne API Token and URL ---
 def confirm_sentinelone_token():
@@ -270,6 +269,7 @@ async def fetch_all_and_write():
 
 # Main loop of grabbing all data asynchronously and pushing to influxdb. 
 async def main_loop():
+    wait_for_influxdb()
     while True:
         await asyncio.sleep(float(refresh_interval))
         await fetch_all_and_write()

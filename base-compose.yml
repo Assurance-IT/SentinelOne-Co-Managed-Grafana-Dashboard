@@ -1,0 +1,60 @@
+services:
+  influxdb:
+    image: influxdb:2.7
+    ports:
+      - "{{influxdb_port}}:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD={{INFLUXDB_PW}}
+      - DOCKER_INFLUXDB_INIT_ORG={{INFLUXDB_ORG}}
+      - DOCKER_INFLUXDB_INIT_BUCKET={{INFLUXDB_BUCKET}}
+      - DOCKER_INFLUXDB_INIT_RETENTION=100d
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN={{INFLUXDB_TOKEN}}
+    volumes:
+    - ./influxdb:/var/lib/influxdb2
+
+  postgres:
+      image: postgres:15
+      restart: always
+      environment:
+        POSTGRES_USER: admin
+        POSTGRES_PASSWORD: {{POSTGRES_PW}}
+        POSTGRES_DB: {{POSTGRES_DB}}
+      ports:
+        - "{{postgres_port}}:5432"
+      volumes:
+        - ./postgres_data:/var/lib/postgresql/data
+
+  grafana:
+    image: grafana/grafana:10.0.0
+    ports:
+      - "{{grafana_port}}:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD={{GRAFANA_PW}}
+      - INFLUXDB_ORG={{INFLUXDB_ORG}}
+      - INFLUXDB_BUCKET={{INFLUXDB_BUCKET}}
+      - INFLUXDB_TOKEN={{INFLUXDB_TOKEN}}
+      - POSTGRES_URL=postgres:5432
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD={{POSTGRES_PW}}
+      - INFLUXDB_URL=http://influxdb:8086
+      - POSTGRES_DB={{POSTGRES_DB}}
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+
+  fetcher:
+    build: ./fetcher
+    restart: unless-stopped
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_ORG={{INFLUXDB_ORG}}
+      - INFLUXDB_BUCKET={{INFLUXDB_BUCKET}}
+      - INFLUXDB_TOKEN={{INFLUXDB_TOKEN}}
+      - REFRESH_INTERVAL_SECONDS=10
+      - SENTINELONE_URL={{SENTINELONE_URL}}
+      - SENTINELONE_API_TOKEN={{SENTINELONE_API}}
+    volumes:
+      - ./fetcher/fetchSentinelOne.py:/app/fetchSentinelOne.py

@@ -9,7 +9,7 @@ datasources:
     basicAuth: false
     jsonData:
       version: Flux
-      organization: ${INFLUXDB_ORG}
-      defaultBucket: ${INFLUXDB_BUCKET}
+      organization: {{INFLUXDB_ORG}}
+      defaultBucket: {{INFLUXDB_BUCKET}}
     secureJsonData:
-      token: ${INFLUXDB_TOKEN}
+      token: {{INFLUXDB_TOKEN}}
