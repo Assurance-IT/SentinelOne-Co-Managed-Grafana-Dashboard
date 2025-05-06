@@ -35,10 +35,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -55,7 +51,7 @@
       "id": 6,
       "options": {
         "colorMode": "value",
-        "graphMode": "none",
+        "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
@@ -74,7 +70,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\r\n    |> range(start: -30d)\r\n    |> filter(fn: (r) => r._measurement == \"agents_in_global_scope\")\r\n    |> yield()",
+          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\r\n    |> range(start: -30d)\r\n    |> filter(fn: (r) => r._measurement == \"agents_in_global_scope\")\r\n    |> last()",
           "refId": "A"
         }
       ],
@@ -134,7 +130,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\r\n    |> range(start: -30d)\r\n    |> filter(fn: (r) => r._measurement == \"agent_action_needed\")\r\n    |> yield()",
+          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\r\n    |> range(start: -30d)\r\n    |> filter(fn: (r) => r._measurement == \"agent_action_needed\")\r\n    |> last()",
           "refId": "A"
         }
       ],
@@ -434,7 +430,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\r\n    |> range(start: -30d)\r\n    |> filter(fn: (r) => r._measurement == \"resolved_threats\")\r\n    |> yield()",
+          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\r\n    |> range(start: -30d)\r\n    |> filter(fn: (r) => r._measurement == \"resolved_threats\")\r\n    |> last()",
           "refId": "A"
         }
       ],
@@ -494,7 +490,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\r\n    |> range(start: -30d)\r\n    |> filter(fn: (r) => r._measurement == \"unresolved_threats\")\r\n    |> yield()",
+          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\r\n    |> range(start: -30d)\r\n    |> filter(fn: (r) => r._measurement == \"unresolved_threats\")\r\n    |> last()",
           "refId": "A"
         }
       ],
@@ -530,8 +526,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 6,
+        "h": 4,
+        "w": 3,
         "x": 0,
         "y": 13
       },
@@ -557,7 +553,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\n    |> range(start: -30d)\n    |> filter(fn: (r) => r._measurement == \"resolved_threats_tp\")\n    |> yield()",
+          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\n    |> range(start: -30d)\n    |> filter(fn: (r) => r._measurement == \"resolved_threats_tp\")\n    |> last()",
           "refId": "A"
         }
       ],
@@ -593,10 +589,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 0,
-        "y": 18
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 13
       },
       "id": 4,
       "options": {
@@ -620,7 +616,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\n    |> range(start: -30d)\n    |> filter(fn: (r) => r._measurement == \"resolved_threats_fp\")\n    |> yield()",
+          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\n    |> range(start: -30d)\n    |> filter(fn: (r) => r._measurement == \"resolved_threats_fp\")\n    |> last()",
           "refId": "A"
         }
       ],
@@ -636,7 +632,7 @@
     "list": []
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
