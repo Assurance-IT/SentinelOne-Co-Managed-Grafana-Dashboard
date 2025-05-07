@@ -6,5 +6,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Run fetcher directly
-CMD ["python", "fetchSentinelOne.py"]
+COPY . fetcher/
+
+# Run project
+CMD ["python", "-m", "fetcher"]

@@ -1,0 +1,10 @@
+import os
+
+INFLUXDB_URL = os.getenv("INFLUXDB_URL")
+INFLUXDB_TOKEN = os.getenv("INFLUXDB_TOKEN")
+INFLUXDB_ORG = os.getenv("INFLUXDB_ORG")
+INFLUXDB_BUCKET = os.getenv("INFLUXDB_BUCKET")
+REFRESH_INTERVAL = float(os.getenv("REFRESH_INTERVAL_SECONDS"))
+S1_URL = os.getenv("SENTINELONE_URL")
+S1_TOKEN = os.getenv("SENTINELONE_API_TOKEN")
+AUTH_HEADER = {"Authorization": f"ApiToken {S1_TOKEN}"}

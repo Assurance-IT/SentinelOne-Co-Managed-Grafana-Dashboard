@@ -9,7 +9,7 @@ datasources:
     database: {{POSTGRES_DB}}
     user: admin
     secureJsonData:
-      password: {{POSTGRES_PASSWORD}}
+      password: {{POSTGRES_PW}}
     jsonData:
       sslmode: disable
       postgresVersion: 1500
