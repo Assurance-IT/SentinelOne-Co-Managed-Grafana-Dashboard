@@ -10,4 +10,6 @@ POSTGRES_DB = os.getenv("POSTGRES_DB")
 REFRESH_INTERVAL = float(os.getenv("REFRESH_INTERVAL_SECONDS"))
 S1_URL = os.getenv("SENTINELONE_URL")
 S1_TOKEN = os.getenv("SENTINELONE_API_TOKEN")
+MERAKI_URL = os.getenv("MERAKI_URL")
+MERAKI_API = os.getenv("MERAKI_API")
 AUTH_HEADER = {"Authorization": f"ApiToken {S1_TOKEN}"}

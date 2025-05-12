@@ -2,10 +2,11 @@ from pathlib import Path
 import shutil
 import secrets
 import string
+import json
 import subprocess
 from dataclasses import dataclass
 
-API_KEYS_FILE = Path("API-KEYS.txt")
+CLIENTS_FILE = Path("Clients.json")
 INSTANCES = Path("instances")
 COMPOSE_FILE = Path("base-compose.yml")
 FETCHER = Path("fetcher")
@@ -30,51 +31,65 @@ class InstanceConfig:
     sentinelone_api: str
     sentinelone_xdr_api: str
 
-def generate_config(customer_name, url, api, index) -> InstanceConfig:
+    meraki_url: str
+    meraki_api: str
+
+def generate_config(
+        customer_name, 
+        customer_index,
+        sentinelone_url, 
+        sentinelone_api,
+        sentinelone_xdr_api,
+        meraki_url,
+        meraki_api) -> InstanceConfig:
+    
     customer_id = customer_name.lower()
     return InstanceConfig(
         customer_name=customer_id,
-        customer_index=index,
+        customer_index=customer_index,
+
         influxdb_pw=generate_api_key(),
         influxdb_org=customer_id,
         influxdb_bucket=customer_id,
         influxdb_token=generate_api_key(),
+
         grafana_pw=generate_api_key(),
+
         postgres_pw=generate_api_key(),
         postgres_db=customer_id,
-        sentinelone_url=url,
-        sentinelone_api=api,
-        sentinelone_xdr_api="TODO"
+
+        sentinelone_url=sentinelone_url,
+        sentinelone_api=sentinelone_api,
+        sentinelone_xdr_api=sentinelone_xdr_api,
+
+        meraki_url=meraki_url,
+        meraki_api=meraki_api
     )
 
 def generate_api_key(length=32) -> str:
     alphabet = string.ascii_letters + string.digits  # A-Z, a-z, 0-9
     return ''.join(secrets.choice(alphabet) for _ in range(length))
 
-# Grab Customer name, url and api key
-def read_api_keys() -> list[tuple[str, str, str]]:
-    keys = []
-    with open(API_KEYS_FILE, "r") as f:
-        for line in f:
-            line = line.strip()
+def get_clients() -> list[InstanceConfig]:
+    with open(CLIENTS_FILE, "r") as clients:
+        data = json.load(clients)
 
-            # Check if empty line or has #
-            if not line or line.startswith("#"):
-                continue
-            # Format is customer_name: URL api_key
-            if ":" not in line:
-                continue
-            
-            customer, URL_TOKEN = map(str.strip, line.split(":", 1))
+    instance_configs = []
 
-            try:
-                url, token = URL_TOKEN.split(maxsplit=1)
-                keys.append((customer, url, token))
-            except ValueError:
-                # This should be logged
-                continue
-    return keys
-
+    for customer in data.get('customers', []):
+        customer_config = generate_config(
+            customer.get("customer_name"),      # Name
+            len(instance_configs),              # Customer index (used for port allocation)
+            customer.get("sentinelone_url"),    # S1 URL
+            customer.get("sentinelone_api"),    # S1 API Key
+            customer.get("sentinelone_xdr_api"), # S1 XDR API Key
+            meraki_url=customer.get("meraki_url") if "meraki_url" in customer else "", # Meraki URL if it exists
+            meraki_api=customer.get("meraki_api") if "meraki_api" in customer else ""  # Meraki API key if it exists
+            )
+        
+        instance_configs.append(customer_config)
+    return instance_configs
+    
 def create_instance_env(config: InstanceConfig) -> Path:
     instance_dir = create_instance_directories(config)
     compose_path = generate_compose_file(config, instance_dir)
@@ -123,6 +138,8 @@ def replace_variables(content: str, config: InstanceConfig) -> str:
                .replace("{{POSTGRES_DB}}", config.postgres_db)
                .replace("{{SENTINELONE_URL}}", config.sentinelone_url)
                .replace("{{SENTINELONE_API}}", config.sentinelone_api)
+               .replace("{{MERAKI_URL}}", config.meraki_url)
+               .replace("{{MERAKI_API}}", config.meraki_api)
                .replace("{{influxdb_port}}", str(8086 + config.customer_index))
                .replace("{{postgres_port}}", str(5432 + config.customer_index))
                .replace("{{grafana_port}}", str(3000 + config.customer_index))
@@ -137,10 +154,9 @@ def start_compose_instance(compose_file: Path) -> None:
 
 def main():
     INSTANCES.mkdir(exist_ok=True)
-    keys = read_api_keys()
+    clients = get_clients()
 
-    for index, (customer_name, url, api) in enumerate(keys):
-        customer_config = generate_config(customer_name, url, api, index)
+    for customer_config in clients:
         compose_file = create_instance_env(customer_config)
         start_compose_instance(compose_file)
 

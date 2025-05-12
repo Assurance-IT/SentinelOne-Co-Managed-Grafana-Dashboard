@@ -1,8 +1,8 @@
 import asyncio
 from .database.influxdb.influx import write_api
-from .database.postgres.postgres import postgres_init
+from .database.postgres.postgres import postgres_init, postgres_write
 from .config import INFLUXDB_BUCKET, INFLUXDB_ORG, REFRESH_INTERVAL
-from .metrics import threats, agents, apps
+from .metrics import marketplace, threats, agents, apps
 
 async def fetch_all_and_write():
     tasks = [
@@ -17,7 +17,9 @@ async def fetch_all_and_write():
 
         apps.total_applications(),
         apps.total_application_vulnerabilities(),
-        apps.critical_application_vulnerabilities()
+        apps.critical_application_vulnerabilities(),
+
+        marketplace.get_integrations()
     ]
     results = await asyncio.gather(*tasks, return_exceptions=True)
     for result in results:
@@ -25,8 +27,8 @@ async def fetch_all_and_write():
             print("Fetch error:", result)
             continue
         # Send data to postgres
-        elif hasattr(result, 'to_postgres') and hasattr(result, 'table_name'):
-            await postgres_client.insert(result.table_name, result.to_postgres())
+        elif isinstance(result, list):
+            await postgres_write(result)
         # Send data to influxdb
         else:
             write_api.write(bucket=INFLUXDB_BUCKET, org=INFLUXDB_ORG, record=result)

@@ -1,0 +1,22 @@
+{
+  "customers": [
+    {
+      "customer_name": "Customer_1",
+      "sentinelone_url": "URL",
+      "sentinelone_api": "KEY",
+      "sentinelone_xdr_api": "TODO"
+    },
+    {
+      "customer_name": "Customer_2",
+      "sentinelone_url": "URL",
+      "sentinelone_api": "KEY",
+      "sentinelone_xdr_api": "TODO"
+    },
+    {
+      "customer_name": "Customer_3",
+      "sentinelone_url": "URL",
+      "sentinelone_api": "KEY",
+      "sentinelone_xdr_api": "TODO"
+    }
+  ]
+}
