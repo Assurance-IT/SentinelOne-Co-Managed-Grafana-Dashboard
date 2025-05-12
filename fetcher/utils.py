@@ -1,5 +1,6 @@
 import time
 import requests
+import socket
 from .config import INFLUXDB_URL, S1_URL, S1_TOKEN, AUTH_HEADER
 
 def wait_for_influxdb():
@@ -12,6 +13,18 @@ def wait_for_influxdb():
         except Exception as e:
             print(f"Waiting for InfluxDB... ({e})")
         time.sleep(5)
+
+def wait_for_postgres():
+    while True:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.settimeout(3)
+            result = sock.connect_ex(("postgres", 5432))
+            if result == 0:
+                print("PostgreSQL port is open and ready.")
+                break
+            else:
+                print("Waiting for PostgreSQL port to open...")
+                time.sleep(5)
 
 def confirm_sentinelone_token():
     print("Verifying SentinelOne URL and API Token...")

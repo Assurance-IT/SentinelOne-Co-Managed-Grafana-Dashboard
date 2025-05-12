@@ -1,4 +1,5 @@
 influxdb-client
+tortoise-orm
 aiohttp
 asyncpg
 requests

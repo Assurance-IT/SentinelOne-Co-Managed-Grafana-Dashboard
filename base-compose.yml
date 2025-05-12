@@ -33,13 +33,13 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD={{GRAFANA_PW}}
+      - INFLUXDB_URL=http://influxdb:8086
       - INFLUXDB_ORG={{INFLUXDB_ORG}}
       - INFLUXDB_BUCKET={{INFLUXDB_BUCKET}}
       - INFLUXDB_TOKEN={{INFLUXDB_TOKEN}}
       - POSTGRES_URL=postgres:5432
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD={{POSTGRES_PW}}
-      - INFLUXDB_URL=http://influxdb:8086
       - POSTGRES_DB={{POSTGRES_DB}}
     volumes:
       - ./grafana_data:/var/lib/grafana
@@ -56,3 +56,5 @@ services:
       - REFRESH_INTERVAL_SECONDS=10
       - SENTINELONE_URL={{SENTINELONE_URL}}
       - SENTINELONE_API_TOKEN={{SENTINELONE_API}}
+      - POSTGRES_PASSWORD={{POSTGRES_PW}}
+      - POSTGRES_DB={{POSTGRES_DB}}

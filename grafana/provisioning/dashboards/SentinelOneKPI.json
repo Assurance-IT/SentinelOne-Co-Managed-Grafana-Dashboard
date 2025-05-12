@@ -70,7 +70,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\r\n    |> range(start: -30d)\r\n    |> filter(fn: (r) => r._measurement == \"agents_in_global_scope\")\r\n    |> last()",
+          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\r\n  |> range(start: -30d)\r\n  |> filter(fn: (r) => r._measurement == \"agents_in_global_scope\")\r\n  |> aggregateWindow(every: 1h, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "refId": "A"
         }
       ],
@@ -130,7 +130,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\r\n    |> range(start: -30d)\r\n    |> filter(fn: (r) => r._measurement == \"agent_action_needed\")\r\n    |> last()",
+          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\r\n    |> range(start: -30d)\r\n    |> filter(fn: (r) => r._measurement == \"agent_action_needed\")\r\n    |> aggregateWindow(every: 1h, fn: mean, createEmpty: false)\r\n    |> yield(name: \"mean\")",
           "refId": "A"
         }
       ],
@@ -189,7 +189,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\n    |> range(start: -30d)\n    |> filter(fn: (r) => r._measurement == \"total_apps\")\n    |> yield()\n    ",
+          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\n  |> range(start: -30d)\n  |> filter(fn: (r) => r._measurement == \"total_apps\")\n  |> aggregateWindow(every: 1h, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n    ",
           "refId": "A"
         }
       ],
@@ -248,7 +248,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\n    |> range(start: -30d)\n    |> filter(fn: (r) => r._measurement == \"total_threats\")\n    |> yield()",
+          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\n  |> range(start: -30d)\n  |> filter(fn: (r) => r._measurement == \"total_threats\")\n  |> aggregateWindow(every: 1h, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "refId": "A"
         }
       ],
@@ -307,7 +307,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\n    |> range(start: -30d)\n    |> filter(fn: (r) => r._measurement == \"total_app_vulns\")\n    |> yield()\n    ",
+          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\n  |> range(start: -30d)\n  |> filter(fn: (r) => r._measurement == \"total_app_vulns\")\n  |> aggregateWindow(every: 1h, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n    ",
           "refId": "A"
         }
       ],
@@ -374,7 +374,7 @@
             "type": "influxdb",
             "uid": "P951FEA4DE68E13C5"
           },
-          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\n    |> range(start: -30d)\n    |> filter(fn: (r) => r._measurement == \"critical_app_vulns\")\n    |> yield()\n    ",
+          "query": "from(bucket: \"{{INFLUXDB_BUCKET}}\")\n  |> range(start: -30d)\n  |> filter(fn: (r) => r._measurement == \"critical_app_vulns\")\n  |> aggregateWindow(every: 1h, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n\n    ",
           "refId": "A"
         }
       ],
@@ -632,7 +632,7 @@
     "list": []
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {},

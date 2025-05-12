@@ -28,6 +28,7 @@ class InstanceConfig:
 
     sentinelone_url: str
     sentinelone_api: str
+    sentinelone_xdr_api: str
 
 def generate_config(customer_name, url, api, index) -> InstanceConfig:
     customer_id = customer_name.lower()
@@ -42,7 +43,8 @@ def generate_config(customer_name, url, api, index) -> InstanceConfig:
         postgres_pw=generate_api_key(),
         postgres_db=customer_id,
         sentinelone_url=url,
-        sentinelone_api=api
+        sentinelone_api=api,
+        sentinelone_xdr_api="TODO"
     )
 
 def generate_api_key(length=32) -> str:
