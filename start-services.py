@@ -140,9 +140,7 @@ def replace_variables(content: str, config: InstanceConfig) -> str:
                .replace("{{SENTINELONE_API}}", config.sentinelone_api)
                .replace("{{MERAKI_URL}}", config.meraki_url)
                .replace("{{MERAKI_API}}", config.meraki_api)
-               .replace("{{influxdb_port}}", str(8086 + config.customer_index))
-               .replace("{{postgres_port}}", str(5432 + config.customer_index))
-               .replace("{{grafana_port}}", str(3000 + config.customer_index))
+               .replace("{{GRAFANA_PORT}}", str(3000 + config.customer_index))
     )
 
 def start_compose_instance(compose_file: Path) -> None:

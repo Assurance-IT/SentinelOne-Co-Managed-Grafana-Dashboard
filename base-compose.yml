@@ -1,8 +1,6 @@
 services:
   influxdb:
     image: influxdb:2.7
-    ports:
-      - "{{influxdb_port}}:8086"
     environment:
       - DOCKER_INFLUXDB_INIT_MODE=setup
       - DOCKER_INFLUXDB_INIT_USERNAME=admin
@@ -21,15 +19,13 @@ services:
         POSTGRES_USER: admin
         POSTGRES_PASSWORD: {{POSTGRES_PW}}
         POSTGRES_DB: {{POSTGRES_DB}}
-      ports:
-        - "{{postgres_port}}:5432"
       volumes:
         - ./postgres_data:/var/lib/postgresql/data
 
   grafana:
     image: grafana/grafana:10.0.0
     ports:
-      - "{{grafana_port}}:3000"
+      - "{{GRAFANA_PORT}}:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD={{GRAFANA_PW}}

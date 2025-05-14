@@ -6,6 +6,7 @@ from .metrics import marketplace, threats, agents, apps
 
 async def fetch_all_and_write():
     tasks = [
+        # Time-based metrics
         threats.resolved_incidents_last_week(),
         threats.unresolved_incidents_last_week(),
         threats.resolved_true_positives_last_week(),
@@ -19,7 +20,9 @@ async def fetch_all_and_write():
         apps.total_application_vulnerabilities(),
         apps.critical_application_vulnerabilities(),
 
-        marketplace.get_integrations()
+        # Text based metrics
+        marketplace.get_integrations(),
+        threats.get_threats(),
     ]
     results = await asyncio.gather(*tasks, return_exceptions=True)
     for result in results:
