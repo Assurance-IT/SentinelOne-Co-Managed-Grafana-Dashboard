@@ -29,19 +29,16 @@ class InstanceConfig:
 
     sentinelone_url: str
     sentinelone_api: str
+    sentinelone_xdr_url: str
     sentinelone_xdr_api: str
-
-    meraki_url: str
-    meraki_api: str
 
 def generate_config(
         customer_name, 
         customer_index,
         sentinelone_url, 
         sentinelone_api,
-        sentinelone_xdr_api,
-        meraki_url,
-        meraki_api) -> InstanceConfig:
+        sentinelone_xdr_url,
+        sentinelone_xdr_api) -> InstanceConfig:
     
     customer_id = customer_name.lower()
     return InstanceConfig(
@@ -60,10 +57,8 @@ def generate_config(
 
         sentinelone_url=sentinelone_url,
         sentinelone_api=sentinelone_api,
-        sentinelone_xdr_api=sentinelone_xdr_api,
-
-        meraki_url=meraki_url,
-        meraki_api=meraki_api
+        sentinelone_xdr_url=sentinelone_xdr_url,
+        sentinelone_xdr_api=sentinelone_xdr_api
     )
 
 def generate_api_key(length=32) -> str:
@@ -78,13 +73,12 @@ def get_clients() -> list[InstanceConfig]:
 
     for customer in data.get('customers', []):
         customer_config = generate_config(
-            customer.get("customer_name"),      # Name
-            len(instance_configs),              # Customer index (used for port allocation)
-            customer.get("sentinelone_url"),    # S1 URL
-            customer.get("sentinelone_api"),    # S1 API Key
-            customer.get("sentinelone_xdr_api"), # S1 XDR API Key
-            meraki_url=customer.get("meraki_url") if "meraki_url" in customer else "", # Meraki URL if it exists
-            meraki_api=customer.get("meraki_api") if "meraki_api" in customer else ""  # Meraki API key if it exists
+            customer.get("customer_name"),       # Name
+            len(instance_configs),               # Customer index (used for port allocation)
+            customer.get("sentinelone_url"),     # S1 URL
+            customer.get("sentinelone_api"),     # S1 API Key
+            customer.get("sentinelone_xdr_url"), # S1 XDR URL
+            customer.get("sentinelone_xdr_api")  # S1 XDR API Key
             )
         
         instance_configs.append(customer_config)
@@ -138,8 +132,8 @@ def replace_variables(content: str, config: InstanceConfig) -> str:
                .replace("{{POSTGRES_DB}}", config.postgres_db)
                .replace("{{SENTINELONE_URL}}", config.sentinelone_url)
                .replace("{{SENTINELONE_API}}", config.sentinelone_api)
-               .replace("{{MERAKI_URL}}", config.meraki_url)
-               .replace("{{MERAKI_API}}", config.meraki_api)
+               .replace("{{SENTINELONE_XDR_URL}}", config.sentinelone_xdr_url)
+               .replace("{{SENTINELONE_XDR_API}}", config.sentinelone_xdr_url)
                .replace("{{GRAFANA_PORT}}", str(3000 + config.customer_index))
     )
 
